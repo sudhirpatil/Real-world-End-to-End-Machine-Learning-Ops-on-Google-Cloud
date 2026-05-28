@@ -1,3 +1,7 @@
-Section3-CloudBuild-CICD/cloudrun-app/create-bigquery-table.sql
 Section3-CloudBuild-CICD/.DS_Store
 .DS_Store
+Section3-CloudBuild-CICD/cloudrun-app/application-files/__pycache__/main.cpython-314.pyc
+Section3-CloudBuild-CICD/cloudrun-app/application-files/__pycache__/test_main.cpython-314-pytest-9.0.3.pyc
+Section3-CloudBuild-CICD/cloudrun-app-cloudbuild/application-files/__pycache__/main.cpython-314.pyc
+Section3-CloudBuild-CICD/cloudrun-app-cloudbuild/application-files/__pycache__/test_main.cpython-313-pytest-9.0.2.pyc
+Section3-CloudBuild-CICD/cloudrun-app-cloudbuild/application-files/__pycache__/test_main.cpython-314-pytest-9.0.3.pyc

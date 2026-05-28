@@ -1,30 +1,37 @@
-steps:
+steps:  # steps: Defines a list of individual actions that Cloud Build executes sequentially. If one step fails (exits with a non-zero code), the entire build stops and fails.
+
+# Pull the previous image to use as a cache source; ignore failure if it doesn't exist yet (first build).
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/udemy-mlops-395416/demo-flask-app:$COMMIT_SHA', '.']
+  entrypoint: 'bash'
+  args: ['-c', 'docker pull gcr.io/mlops-course-oreilly/demo-flask-app:latest || true']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/udemy-mlops-395416/demo-flask-app:$COMMIT_SHA']
+  args: ['build', '--platform', 'linux/amd64', '--cache-from', 'gcr.io/mlops-course-oreilly/demo-flask-app:latest', '-t', 'gcr.io/mlops-course-oreilly/demo-flask-app:$COMMIT_SHA', '-t', 'gcr.io/mlops-course-oreilly/demo-flask-app:latest', '.']
 
-- name: 'gcr.io/udemy-mlops-395416/demo-flask-app:$COMMIT_SHA'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/mlops-course-oreilly/demo-flask-app:$COMMIT_SHA']
+
+- name: 'gcr.io/mlops-course-oreilly/demo-flask-app:$COMMIT_SHA'
   entrypoint: 'bash'
   args:
    - '-c'
    - |
       python -m pytest
   
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
-  args:
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk' # name: (Required) The Docker image used to run the step. Examples: ubuntu, python:3.10-slim, gcr.io/cloud-builders/docker.
+  entrypoint: gcloud # entrypoint: (Optional) The main command or executable binary you want to run inside the container (e.g. bash, python, gcloud, pytest). If omitted, Cloud Build uses the image's default entrypoint.
+  args: # args: (Optional) A list of arguments or flags passed directly to the entrypoint.
    - 'run'
    - 'deploy'
-   - 'py-bq-load'
+   - 'cloudbuild-flask-app'
    - '--image'
-   - 'gcr.io/udemy-mlops-395416/demo-flask-app:$COMMIT_SHA'
+   - 'gcr.io/mlops-course-oreilly/demo-flask-app:$COMMIT_SHA'
    - '--region'
    - 'us-central1'
    - '--allow-unauthenticated'
-images:
-- 'gcr.io/udemy-mlops-395416/demo-flask-app:$COMMIT_SHA'
+images: # (Optional) A list of built images that Cloud Build will automatically push to your registry if all steps complete successfully.
+- 'gcr.io/mlops-course-oreilly/demo-flask-app:$COMMIT_SHA'
+- 'gcr.io/mlops-course-oreilly/demo-flask-app:latest'
 
-options:
+options: #options: (Optional) Global build settings (e.g. specifying logging: CLOUD_LOGGING_ONLY).
   logging: CLOUD_LOGGING_ONLY
